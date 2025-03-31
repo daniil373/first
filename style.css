@@ -1,0 +1,118 @@
+body {
+    font-family: sans-serif;
+    margin: 20px;
+}
+
+h1, h3 {
+    text-align: center;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+th, td {
+    border: 1px solid #ccc;
+    padding: 8px;
+    text-align: center;
+}
+
+th {
+    background-color: #f0f0f0;
+}
+
+#eventForm {
+    margin-bottom: 20px;
+    padding: 10px;
+    border: 1px solid #ccc;
+}
+
+#eventForm label {
+    display: inline-block;
+    width: 120px;
+    text-align: right;
+    margin-right: 10px;
+}
+
+#eventForm input, #eventForm select {
+    width: 200px;
+    padding: 5px;
+    margin-bottom: 10px;
+}
+
+button {
+    padding: 8px 15px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+button:hover {
+    background-color: #3e8e41;
+}
+
+css
+3. JavaScript (script.js):
+
+function addEvent() {
+    const day = document.getElementById("day").value;
+    const time = document.getElementById("time").value;
+    const eventText = document.getElementById("event").value;
+
+    const table = document.getElementById("schedule");
+    const row = table.rows[parseInt(time) + 1];  // +1 для thead
+    const cell = row.cells[parseInt(day)];
+
+    cell.textContent = eventText;
+}
+
+function deleteEvent() {
+    const day = document.getElementById("day").value;
+    const time = document.getElementById("time").value;
+
+    const table = document.getElementById("schedule");
+    const row = table.rows[parseInt(time) + 1];
+    const cell = row.cells[parseInt(day)];
+
+    cell.textContent = ""; // Очищаем ячейку
+}
+
+
+function saveSchedule() {
+    const table = document.getElementById("schedule");
+    const scheduleData = [];
+
+    // Сохраняем только данные ячеек (без заголовков)
+    for (let i = 1; i < table.rows.length; i++) {
+        const rowData = [];
+        for (let j = 1; j < table.rows[i].cells.length; j++) {
+            rowData.push(table.rows[i].cells[j].textContent);
+        }
+        scheduleData.push(rowData);
+    }
+
+    localStorage.setItem("scheduleData", JSON.stringify(scheduleData));
+    alert("Расписание сохранено!");
+}
+
+function loadSchedule() {
+    const scheduleDataString = localStorage.getItem("scheduleData");
+
+    if (scheduleDataString) {
+        const scheduleData = JSON.parse(scheduleDataString);
+        const table = document.getElementById("schedule");
+
+        for (let i = 1; i < table.rows.length; i++) {
+            for (let j = 1; j < table.rows[i].cells.length; j++) {
+                table.rows[i].cells[j].textContent = scheduleData[i-1][j-1] || ""; // Подстраховка от отсутствия данных
+            }
+        }
+        alert("Расписание загружено!");
+    } else {
+        alert("Расписание не найдено!");
+    }
+}
